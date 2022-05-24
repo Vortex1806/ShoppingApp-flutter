@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/Product.dart';
+import '../widgets/product_item.dart';
 
 class ProductsScreen extends StatelessWidget {
   final List<Product> loadedProjects = [
@@ -47,12 +48,16 @@ class ProductsScreen extends StatelessWidget {
       body: GridView.builder(
         padding: const EdgeInsets.all(10),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-        ),
+            crossAxisCount: 2,
+            childAspectRatio: 3 / 2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10),
         itemCount: loadedProjects.length,
         itemBuilder: (BuildContext context, int index) {
-          return Container(
-            
+          return ProductItem(
+            id: loadedProjects[index].id,
+            title: loadedProjects[index].title,
+            imageUrl: loadedProjects[index].imageUrl,
           );
         },
       ),
