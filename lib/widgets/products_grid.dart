@@ -5,11 +5,15 @@ import 'package:provider/provider.dart';
 import './product_item.dart';
 
 class ProductsGrid extends StatelessWidget {
+  final bool showFavs;
+
+  ProductsGrid(this.showFavs);
+
   @override
   Widget build(BuildContext context) {
 //  remember to get the provider class products and not product
     final productsData = Provider.of<Products>(context);
-    final products = productsData.items;
+    final products = showFavs ? productsData.favoriteItems : productsData.items;
     return GridView.builder(
       padding: const EdgeInsets.all(10),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -21,7 +25,7 @@ class ProductsGrid extends StatelessWidget {
       itemBuilder: (BuildContext context, int i) =>
           ChangeNotifierProvider.value(
         //objects even if deleted be in the memory and cause issues but change notification provider does autonatically dispose the old ones
-        // create: (c) => products[index],
+        // create: (c) => products[i],
         value: products[i],
         child: ProductItem(
             // id: products[index].id,
