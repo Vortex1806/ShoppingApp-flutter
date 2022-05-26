@@ -18,11 +18,17 @@ class ProductsGrid extends StatelessWidget {
           crossAxisSpacing: 10,
           mainAxisSpacing: 10),
       itemCount: products.length,
-      itemBuilder: (BuildContext context, int index) => ProductItem(
-          id: products[index].id,
-          title: products[index].title,
-          imageUrl: products[index].imageUrl,
-        ),
+      itemBuilder: (BuildContext context, int i) =>
+          ChangeNotifierProvider.value(
+        //objects even if deleted be in the memory and cause issues but change notification provider does autonatically dispose the old ones
+        // create: (c) => products[index],
+        value: products[i],
+        child: ProductItem(
+            // id: products[index].id,
+            // title: products[index].title,
+            // imageUrl: products[index].imageUrl,
+            ),
+      ),
     );
   }
 }
