@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/providers/cart.dart';
+import 'package:flutter_complete_guide/screens/cart_screen.dart';
 import 'package:provider/provider.dart';
 // import 'package:flutter_complete_guide/providers/products_provider.dart';
 // import 'package:provider/provider.dart';
@@ -24,6 +25,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
     var _showonlyFavorites = false;
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
         title: Text('My Shop'),
         actions: [
           PopupMenuButton(
@@ -56,7 +58,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
             ),
             child: IconButton(
               icon: Icon(Icons.shopping_cart),
-              onPressed: () {},
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(CartScreen.routeName),
             ),
           )
         ],

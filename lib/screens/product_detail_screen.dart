@@ -15,9 +15,11 @@ class ProductDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final productId = ModalRoute.of(context).settings.arguments as String;
     //it will completely rebuild this pagr if listen not set to false
-    final loadedProduct = Provider.of<Products>(context,listen: false).findById(productId);
+    final loadedProduct =
+        Provider.of<Products>(context, listen: false).findById(productId);
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
         title: Text(loadedProduct.title),
       ),
     );
