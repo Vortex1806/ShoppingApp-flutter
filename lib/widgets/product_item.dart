@@ -36,9 +36,9 @@ class ProductItem extends StatelessWidget {
             //widget to add at start of the bar = leading
             //only changing one widget
             leading: Consumer<Product>(
-              builder: (ctx, Product, child) => IconButton(
+              builder: (ctx, Product, _) => IconButton(
                 //use ctx here
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(context).accentColor,
                 // color: Colors.deepOrange,
                 icon: Icon(product.isFavorite
                     ? Icons.favorite
@@ -57,8 +57,19 @@ class ProductItem extends StatelessWidget {
               icon: Icon(Icons.shopping_cart),
               onPressed: () {
                 cart.addItem(product.id, product.price, product.title);
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('Added Item to cart'),
+                  duration: Duration(seconds: 2),
+                  action: SnackBarAction(
+                    label: 'Undo',
+                    onPressed: () {
+                      cart.removeSingleItem(product.id);
+                    },
+                  ),
+                ));
               },
-              color: Theme.of(context).colorScheme.secondary,
+              color: Theme.of(context).accentColor,
             ),
           ),
         ));
