@@ -17,7 +17,6 @@ class CartScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Cart'),
-        backgroundColor: Theme.of(context).primaryColor,
       ),
       drawer: AppDrawer(),
       body: Column(

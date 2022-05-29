@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_complete_guide/screens/add-edit_product_screen.dart';
 import 'package:flutter_complete_guide/screens/admin_products_screen.dart';
 import 'package:flutter_complete_guide/screens/orders_screen.dart';
 import 'package:provider/provider.dart';
@@ -30,14 +31,17 @@ class MyApp extends StatelessWidget {
             fontFamily: 'Lato',
             primaryColor: Colors.purple,
             accentColor: Colors.deepOrange,
+            appBarTheme: AppBarTheme(backgroundColor: Colors.purple),
           ),
           home: ProductsScreen(),
           routes: {
             ProductDetail.routeName: (context) => ProductDetail(),
             CartScreen.routeName: (context) => CartScreen(),
-            OrdersScreen.routeName:(context) => OrdersScreen(),
-            UserProductsScreen.routeName:(context) => UserProductsScreen(),
+            OrdersScreen.routeName: (context) => OrdersScreen(),
+            UserProductsScreen.routeName: (context) => UserProductsScreen(),
+            EditProductsScreen.namedRoute: (context) => EditProductsScreen(),
           },
-        ));
+        )
+      );
   }
 }

@@ -20,13 +20,12 @@ class ProductsScreen extends StatefulWidget {
 }
 
 class _ProductsScreenState extends State<ProductsScreen> {
-    var _showonlyFavorites = false;
+  var _showonlyFavorites = false;
   @override
   Widget build(BuildContext context) {
     // final productscontainer = Provider.of<Products>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
         title: Text('My Shop'),
         actions: [
           PopupMenuButton(
