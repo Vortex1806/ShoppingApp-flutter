@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:flutter_complete_guide/providers/Product.dart';
+import 'package:flutter_complete_guide/providers/products_provider.dart';
 
 class EditProductsScreen extends StatefulWidget {
   static const namedRoute = '/edit-products';
@@ -18,6 +21,14 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
   final _form = GlobalKey<FormState>();
   var _editedProduct =
       Product(id: null, title: '', description: '', price: 0, imageUrl: '');
+  var _isInit = true;
+  var _initValue = {
+    'title': '',
+    'descrption': '',
+    // text values only work with strings
+    'price': '',
+    'imageUrl': '',
+  };
 
   @override
   void initState() {
@@ -25,8 +36,39 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
     super.initState();
   }
 
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final productId = ModalRoute.of(context).settings.arguments as String;
+
+      if (productId != null) {
+        final product =
+            Provider.of<Products>(context, listen: false).findById(productId);
+        _editedProduct = product;
+        _initValue = {
+          'title': _editedProduct.title,
+          'descrption': _editedProduct.description,
+          'price': _editedProduct.price.toString(),
+          // 'imageUrl': _editedProduct.imageUrl,
+          'imageUrl': '',
+        };
+        _imageUrlController.text = _editedProduct.imageUrl;
+      }
+    }
+    // as it might run multiple times
+    _isInit = false;
+    super.didChangeDependencies();
+  }
+
   void _updateimageurl() {
     if (!_imageurlFocusNode.hasFocus) {
+      if ((!_imageUrlController.text.startsWith('http') &&
+              !_imageUrlController.text.startsWith('https')) ||
+          (!_imageUrlController.text.endsWith('png') &&
+              !_imageUrlController.text.endsWith('jpg') &&
+              !_imageUrlController.text.endsWith('jpeg'))) {
+        return;
+      }
       setState(() {});
     }
   }
@@ -35,10 +77,14 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
     final isvalid = _form.currentState.validate();
     if (isvalid) {
       _form.currentState.save();
-      print(_editedProduct.title);
-      print(_editedProduct.price);
-      print(_editedProduct.imageUrl);
-      print(_editedProduct.description);
+      if (_editedProduct.id != null) {
+        Provider.of<Products>(context, listen: false)
+            .updateProduct(_editedProduct.id, _editedProduct);
+      } else {
+        Provider.of<Products>(context, listen: false)
+            .addProduct(_editedProduct);
+      }
+      Navigator.of(context).pop();
     }
     return;
   }
@@ -65,6 +111,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
             child: ListView(
               children: [
                 TextFormField(
+                  initialValue: _initValue['title'],
                   decoration: InputDecoration(labelText: 'Title'),
                   textInputAction: TextInputAction.next,
                   onFieldSubmitted: (_) {
@@ -79,6 +126,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                   onSaved: (value) {
                     _editedProduct = Product(
                         id: _editedProduct.id,
+                        isFavorite: _editedProduct.isFavorite,
                         title: value,
                         description: _editedProduct.description,
                         price: _editedProduct.price,
@@ -87,15 +135,20 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                 ),
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Price'),
+                  initialValue: _initValue['price'],
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.number,
                   focusNode: _priceFocusNode,
                   onFieldSubmitted: (_) {
                     FocusScope.of(context).requestFocus(_descriptionFocusNode);
                   },
+                  validator: (value) {
+                    return null;
+                  },
                   onSaved: (value) {
                     _editedProduct = Product(
                         id: _editedProduct.id,
+                        isFavorite: _editedProduct.isFavorite,
                         title: _editedProduct.title,
                         description: _editedProduct.description,
                         price: double.parse(value),
@@ -103,6 +156,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                   },
                 ),
                 TextFormField(
+                  initialValue: _initValue['descrption'],
                   decoration: InputDecoration(labelText: 'Description'),
                   maxLines: 3,
                   textInputAction: TextInputAction.next,
@@ -111,6 +165,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                   onSaved: (value) {
                     _editedProduct = Product(
                         id: _editedProduct.id,
+                        isFavorite: _editedProduct.isFavorite,
                         title: _editedProduct.title,
                         description: value,
                         price: _editedProduct.price,
@@ -141,9 +196,25 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                         keyboardType: TextInputType.url,
                         controller: _imageUrlController,
                         focusNode: _imageurlFocusNode,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Enter an image url';
+                          }
+                          if (!value.startsWith('http') &&
+                              !value.startsWith('https')) {
+                            return 'Enter a valid url';
+                          }
+                          if (!value.endsWith('jpg') &&
+                              !value.endsWith('jpeg') &&
+                              !value.endsWith('png')) {
+                            'Enter a valid image url';
+                          }
+                          return null;
+                        },
                         onSaved: (value) {
                           _editedProduct = Product(
                               id: _editedProduct.id,
+                              isFavorite: _editedProduct.isFavorite,
                               title: _editedProduct.title,
                               description: _editedProduct.description,
                               price: _editedProduct.price,

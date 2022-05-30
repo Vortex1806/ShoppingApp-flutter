@@ -11,8 +11,7 @@ class Products with ChangeNotifier {
         price: 29.99,
         imageUrl:
             'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg',
-        isFavorite: false
-        ),
+        isFavorite: false),
     Product(
         id: 'p2',
         title: 'Trousers',
@@ -20,8 +19,7 @@ class Products with ChangeNotifier {
         price: 59.99,
         imageUrl:
             'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Trousers%2C_dress_%28AM_1960.022-8%29.jpg/512px-Trousers%2C_dress_%28AM_1960.022-8%29.jpg',
-        isFavorite: false
-        ),
+        isFavorite: false),
     Product(
         id: 'p3',
         title: 'Yellow Scarf',
@@ -29,8 +27,7 @@ class Products with ChangeNotifier {
         price: 19.99,
         imageUrl:
             'https://live.staticflickr.com/4043/4438260868_cc79b3369d_z.jpg',
-        isFavorite: false
-        ),
+        isFavorite: false),
     Product(
         id: 'p4',
         title: 'A Pan',
@@ -38,8 +35,7 @@ class Products with ChangeNotifier {
         price: 49.99,
         imageUrl:
             'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
-        isFavorite: false 
-        ),
+        isFavorite: false),
   ];
 
   List<Product> get items {
@@ -67,8 +63,31 @@ class Products with ChangeNotifier {
     return _items.firstWhere((element) => element.id == id);
   }
 
-  void addProduct() {
+  void addProduct(Product product) {
+    final newProduct = Product(
+        id: DateTime.now().toString(),
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl);
+    _items.add(newProduct);
+    _items.insert(0, newProduct);
     // _items.add(value);
     notifyListeners();
+  }
+
+  void deleteProduct(String id) {
+    _items.removeWhere((element) => element.id == id);
+    notifyListeners();
+  }
+
+  void updateProduct(String id, Product product) {
+    final index = _items.indexWhere((element) => element.id == id);
+    if (index >= 0) {
+      _items[index] = product;
+      notifyListeners();
+    } else {
+      print('...');
+    }
   }
 }
