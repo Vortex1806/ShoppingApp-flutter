@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/providers/cart.dart';
 import 'package:flutter_complete_guide/screens/cart_screen.dart';
+import 'package:flutter_complete_guide/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
 // import 'package:flutter_complete_guide/providers/products_provider.dart';
 // import 'package:provider/provider.dart';
@@ -19,13 +20,12 @@ class ProductsScreen extends StatefulWidget {
 }
 
 class _ProductsScreenState extends State<ProductsScreen> {
+  var _showonlyFavorites = false;
   @override
   Widget build(BuildContext context) {
     // final productscontainer = Provider.of<Products>(context, listen: false);
-    var _showonlyFavorites = false;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
         title: Text('My Shop'),
         actions: [
           PopupMenuButton(
@@ -64,6 +64,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
           )
         ],
       ),
+      drawer: AppDrawer(),
       body: ProductsGrid(_showonlyFavorites),
     );
   }
