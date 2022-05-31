@@ -74,7 +74,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
     }
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     final isvalid = _form.currentState.validate();
     if (isvalid) {
       _form.currentState.save();
@@ -82,23 +82,37 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
         _isLoading = true;
       });
       if (_editedProduct.id != null) {
-        Provider.of<Products>(context, listen: false)
+        await Provider.of<Products>(context, listen: false)
             .updateProduct(_editedProduct.id, _editedProduct);
-        setState(() {
-          _isLoading = true;
-        });
-        Navigator.of(context).pop();
       } else {
-        Provider.of<Products>(context, listen: false)
-            .addProduct(_editedProduct)
-            .then((_) {
-          setState(() {
-            _isLoading = true;
-          });
-          Navigator.of(context).pop();
-        });
+        try {
+          await Provider.of<Products>(context, listen: false)
+              .addProduct(_editedProduct);
+        } catch (error) {
+          await showDialog<Null>(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                    title: Text('Error occoured'),
+                    content: Text('Something went Wrong'),
+                    actions: [
+                      FlatButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Okay'))
+                    ],
+                  ));
+        } // } finally {
+        //   setState(() {
+        //     _isLoading = false;
+        //   });
+        //   Navigator.of(context).pop();
+        // }
       }
-      // Navigator.of(context).pop();
+      setState(() {
+        _isLoading = true;
+      });
+      Navigator.of(context).pop();
     }
     return;
   }
