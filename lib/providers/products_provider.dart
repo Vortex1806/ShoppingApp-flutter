@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import 'Product.dart';
 
@@ -63,17 +66,31 @@ class Products with ChangeNotifier {
     return _items.firstWhere((element) => element.id == id);
   }
 
-  void addProduct(Product product) {
-    final newProduct = Product(
-        id: DateTime.now().toString(),
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        imageUrl: product.imageUrl);
-    _items.add(newProduct);
-    _items.insert(0, newProduct);
-    // _items.add(value);
-    notifyListeners();
+  Future<void> addProduct(Product product) {
+    final url = Uri.parse(
+        'https://myshop-64a2e-default-rtdb.asia-southeast1.firebasedatabase.app/products.json');
+    return http
+        .post(url,
+            body: json.encode({
+              'title': product.title,
+              'description': product.description,
+              'price': product.price,
+              'imageUrl': product.imageUrl,
+              'isFavorite': product.isFavorite
+            }))
+        .then((response) {
+      //reponse gives id
+      final newProduct = Product(
+          id: json.decode(response.body)['name'],
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          imageUrl: product.imageUrl);
+      _items.add(newProduct);
+      // _items.insert(0, newProduct);
+      // _items.add(value);
+      notifyListeners();
+    });
   }
 
   void deleteProduct(String id) {
