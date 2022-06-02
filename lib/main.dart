@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/screens/products_overview_screen.dart';
+import 'package:flutter_complete_guide/screens/splash_screen.dart';
 
 import '../providers/auth.dart';
 import '../screens/add-edit_product_screen.dart';
@@ -22,10 +23,17 @@ class MyApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider(create: (ctx) => Auth()),
           ChangeNotifierProxyProvider<Auth, Products>(
-              update: (ctx, auth, previousproducts) => Products(auth.token,
+              update: (ctx, auth, previousproducts) => Products(
+                  auth.token,
+                  auth.userId,
                   previousproducts == null ? [] : previousproducts.items)),
           ChangeNotifierProvider(create: (ctx) => Cart()),
-          ChangeNotifierProvider(create: (ctx) => Order()),
+          ChangeNotifierProxyProvider<Auth, Order>(
+              update: (ctx, auth, previousorders) => Order(
+                    auth.token,
+                    auth.userId,
+                    previousorders == null ? [] : previousorders.orders,
+                  )),
         ],
         // use create while using a new instance
 
@@ -39,7 +47,14 @@ class MyApp extends StatelessWidget {
               accentColor: Colors.deepOrange,
               appBarTheme: AppBarTheme(backgroundColor: Colors.purple),
             ),
-            home: authData.isAuth ? ProductsScreen() : AuthScreen(),
+            home: authData.isAuth
+                ? ProductsScreen()
+                : FutureBuilder(
+                    future: authData.tryAutoLogin(),
+                    builder: (ctx, authSnapshot) =>
+                        authSnapshot.connectionState == ConnectionState.waiting
+                            ? SplashScreen()
+                            : AuthScreen()),
             routes: {
               ProductsScreen.routeName: (context) => ProductsScreen(),
               ProductDetail.routeName: (context) => ProductDetail(),

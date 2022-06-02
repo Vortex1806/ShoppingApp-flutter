@@ -8,6 +8,7 @@ class Product with ChangeNotifier {
   final String title;
   final String description;
   final double price;
+  // final String userId;
   final String imageUrl;
   bool isFavorite;
 
@@ -17,6 +18,7 @@ class Product with ChangeNotifier {
     @required this.description,
     @required this.price,
     @required this.imageUrl,
+    // @required this.userId,
     this.isFavorite = false,
   });
 
@@ -25,15 +27,14 @@ class Product with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleFavorite() async {
+  Future<void> toggleFavorite(String authToken, String userId) async {
     final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
     final url = Uri.parse(
-        'https://myshop-64a2e-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json');
+        'https://myshop-64a2e-default-rtdb.asia-southeast1.firebasedatabase.app/userfavorites/$userId/$id.json?auth=$authToken');
     try {
-      final response =
-          await http.patch(url, body: json.encode({'isFavorite': isFavorite}));
+      final response = await http.put(url, body: json.encode(isFavorite));
       if (response.statusCode >= 400) {
         _setFavVal(oldStatus);
       }
