@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/providers/cart.dart';
+import 'package:flutter_complete_guide/providers/products_provider.dart';
 import 'package:flutter_complete_guide/screens/cart_screen.dart';
 import 'package:flutter_complete_guide/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
@@ -15,12 +16,40 @@ enum filterOptions {
 }
 
 class ProductsScreen extends StatefulWidget {
+  static const routeName = '/product_screen';
   @override
   State<ProductsScreen> createState() => _ProductsScreenState();
 }
 
 class _ProductsScreenState extends State<ProductsScreen> {
   var _showonlyFavorites = false;
+  var isInit = true;
+  var isLoading = false;
+
+  @override
+  void initState() {
+    // Provider.of<Products>(context).fetchandSetProducts(); Wont work
+    // Future.delayed(Duration.zero)
+    //     .then((value) => Provider.of<Products>(context).fetchandSetProducts());
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    //runs many times so add a check
+    if (isInit) {
+      isLoading = true;
+      Provider.of<Products>(context).fetchandSetProducts().then((_) {
+        setState(() {
+          isLoading = false;
+        });
+      });
+    }
+    isInit = false;
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     // final productscontainer = Provider.of<Products>(context, listen: false);
@@ -65,7 +94,11 @@ class _ProductsScreenState extends State<ProductsScreen> {
         ],
       ),
       drawer: AppDrawer(),
-      body: ProductsGrid(_showonlyFavorites),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ProductsGrid(_showonlyFavorites),
     );
   }
 }

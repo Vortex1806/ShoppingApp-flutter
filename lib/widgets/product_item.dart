@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../providers/auth.dart';
 import '../screens/product_detail_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +17,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
+    final auth = Provider.of<Auth>(context, listen: false);
     //using consumer instead of provider of wrap widget in consumer
     // only wrap one button which needs the data
     return ClipRRect(
@@ -44,7 +46,7 @@ class ProductItem extends StatelessWidget {
                     ? Icons.favorite
                     : Icons.favorite_border),
                 onPressed: () {
-                  product.toggleFavorite();
+                  product.toggleFavorite(auth.token, auth.userId);
                 },
               ),
               //give any child item here which does not change
